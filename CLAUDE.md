@@ -40,16 +40,13 @@
 - **Pragmatic over dogmatic** - Adapt to and adopt existing project conventions
 - **Simplicity and clear intent over clever code** - Be boring and obvious and choose the simplest solution
 - **Communicate like a pair programmer** - Explain reasoning, ask clarifying questions, propose alternatives
-- **Test-driven development** - write tests first, before implementation code
 
 ### Simplicity Means
 
 - Single responsibility per function/class
 - Avoid premature abstractions
 - No clever tricks - choose the boring solution
-- If you need to explain it, it's too complex
 - Prefer explicit over implicit behavior
-- Use standard library before external dependencies wherever possible
 
 ## Pair Programming Principles
 
@@ -59,7 +56,6 @@
 - **Ask before assuming** - Clarify requirements and edge cases
 - **Propose alternatives** - Suggest 2-3 approaches with trade-offs
 - **Admit uncertainty** - Say when unsure rather than guess
-- **Request feedback** - Check in regularly on approach
 
 ### Code Review Mindset
 
@@ -69,107 +65,20 @@
 - Respect existing patterns unless there's clear benefit to change
 - Focus on maintainability
 
-## Process
-
-### 1. Planning & Staging
-
-Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
-
-```markdown
-## Stage N: [Name]
-
-**Goal**: [Specific deliverable]
-**Success Criteria**: [Testable outcomes]
-**Tests**: [Specific test cases]
-**Dependencies**: [What needs to be in place]
-**Risks**: [Potential issues and mitigation]
-**Status**: [Not Started|In Progress|Complete|Blocked]
-```
-
-- Update status as you progress
-- Document blockers immediately
-- Remove `IMPLEMENTATION_PLAN.md` file when all stages are done
-
-### 2. Implementation Flow
-
-1. **Understand** - Study existing patterns in codebase
-2. **Clarify** - Ask about ambiguous requirements
-3. **Design** - Propose approach with rationale
-4. **Test** - Write test first (red)
-5. **Implement** - Minimal code to pass (green)
-6. **Refactor** - Clean up with tests passing
-7. **Document** - Update relevant docs/comments
-8. **Commit** - With clear message linking to plan
-
-### 3. When Stuck (After 3 Attempts)
-
-**CRITICAL**: Maximum 3 attempts per issue, then STOP and collaborate.
-
-1. **Document what failed**:
-
-   - What you tried
-   - Specific error messages
-   - Why you think it failed
-
-2. **Research alternatives**:
-
-   - Find 2-3 similar implementations
-   - Note different approaches used
-   - Check project issues/PRs for similar problems
-
-3. **Question fundamentals**:
-
-   - Is this the right abstraction level?
-   - Can this be split into smaller problems?
-   - Is there a simpler approach entirely?
-
-4. **Propose next steps**:
-   - Different library/framework feature?
-   - Different architectural pattern?
-   - Remove abstraction instead of adding?
-   - Need to revisit requirements?
-
 ## Language-Specific Guidelines
-
-### Go
-
-- **Error handling**: Return errors, don't panic in libraries
-- **Interfaces**: Define at consumer, not provider
-- **Goroutines**: Document lifetime and cleanup
-- **Channels**: Prefer simple communication patterns
-- **Testing**: Use table-driven tests with subtests
-- **Naming**: Follow Go conventions (no underscores, short names in small scope)
-
-```go
-// Good: Table-driven test
-func TestCalculate(t *testing.T) {
-    tests := []struct {
-        name     string
-        input    int
-        expected int
-    }{
-        {"zero", 0, 0},
-        {"positive", 5, 25},
-    }
-
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            got := Calculate(tt.input)
-            if got != tt.expected {
-                t.Errorf("Calculate(%d) = %d; want %d", tt.input, got, tt.expected)
-            }
-        })
-    }
-}
-```
 
 ### TypeScript/JavaScript
 
 - **Types**: Prefer interfaces over type aliases for objects
 - **Async**: Use async/await over callbacks/promises
 - **Null checks**: Use optional chaining and nullish coalescing
-- **Immutability**: Prefer const and avoid mutations
-- **Module exports**: Named exports for libraries, default for components
+- **Testing**: Use vitest for unit tests and mocking, use test() not it() when writing tests
+- **Paradigm**: Use a mix of functional programming and OOP as appropriate, use composition over inheritance
+- **Composition**: Prefer pipe over compose for functional programming
+- **Objects**: Use immer for deep cloning, spread for shallow cloning
+- **Helper functions**: Use lodash for helper functions, don't write your own if lodash provides it
+- **Any**: Avoid using any unless absolutely necessary, always use explicit types
+- **Function returns**: Always specify a type for function return values
 
 ```typescript
 // Good: Clear types and error handling
@@ -234,10 +143,10 @@ export function UserCard({ user, onEdit }: UserCardProps) {
 
 ### Architecture Principles
 
-- **Composition over inheritance** - Use dependency injection
+- **Composition over inheritance** - Use interfaces and dependency injection
 - **Interfaces over implementations** - Enable testing and flexibility
 - **Explicit over implicit** - Clear data flow and dependencies
-- **Test-driven when possible** - Never disable tests, fix them
+- **Tests cover as much code as possible** - Never disable tests, fix them
 - **Fail fast** - Validate early and provide clear errors
 
 ### Code Quality
@@ -270,9 +179,8 @@ export function UserCard({ user, onEdit }: UserCardProps) {
 - **Structured logging** - Use objects/fields, not string concatenation
 - **Appropriate levels** - ERROR, WARN, INFO, DEBUG used correctly
 - **Contextual information** - Include request IDs, user IDs, operation names
-- **No sensitive data** - Never log passwords, tokens, or PII
+- **No sensitive data** - Never log passwords, security tokens, or PII
 - **Actionable messages** - Log what happened and why it matters
-- **Performance considered** - Avoid expensive logging in hot paths
 
 Examples:
 
@@ -294,11 +202,11 @@ Examples:
 When multiple valid approaches exist, choose based on:
 
 1. **Testability** - Can I easily test this?
-2. **Readability** - Will someone understand this in 6 months?
+2. **Readability** - Will another engineer understand this in 6 months?
 3. **Consistency** - Does this match project patterns?
 4. **Simplicity** - Is this the simplest solution that works?
 5. **Performance** - Is it fast enough for the use case?
-6. **Reversibility** - How hard to change later?
+6. **Reversibility** - How hard is this to change later?
 7. **Maintainability** - Can another engineer maintain this?
 
 ## Project Integration
@@ -315,14 +223,13 @@ When multiple valid approaches exist, choose based on:
 - Use project's existing build system
 - Use project's test framework
 - Use project's formatter/linter settings
-- Check package.json/go.mod for existing dependencies
-- Don't introduce new tools without strong justification
+- Check package.json for existing dependencies
+- Don't introduce new tools or modules without justification
 
 ### Git Workflow
 
 - **Trunk-based development**: work on main branch by default, consider feature branching for very large changes
-- **Commits**: Conventional commits when used, otherwise clear and concise
-- **PR size**: Aim for <400 lines changed
+- **Commits**: Always be clear and concise, use conventional commits
 - **PR description**: Context, changes, testing done
 - **Reviews**: Address all feedback before merging
 
@@ -353,9 +260,9 @@ When multiple valid approaches exist, choose based on:
 // Good test name pattern
 describe("UserService", () => {
   describe("createUser", () => {
-    it("should create user with valid data", async () => {});
-    it("should reject duplicate email addresses", async () => {});
-    it("should sanitize user input", async () => {});
+    test("should create user with valid data", async () => {});
+    test("should reject duplicate email addresses", async () => {});
+    test("should sanitise user input", async () => {});
   });
 });
 ```
@@ -370,7 +277,7 @@ describe("UserService", () => {
 ### Frontend
 
 - Bundle size matters - lazy load when appropriate
-- Minimize re-renders in React
+- Minimise re-renders in React
 - Debounce/throttle expensive operations
 - Use web workers for heavy computation
 - Consider virtual scrolling for long lists
@@ -386,13 +293,15 @@ describe("UserService", () => {
 ## Security Principles
 
 - Never trust user input
-- Validate and sanitize all inputs
+- Validate and sanitise all inputs
 - Use parameterised queries
 - Implement proper authentication/authorisation
 - Keep dependencies updated
 - Follow OWASP guidelines
 - Store secrets securely (never in code)
 - Log security events appropriately
+- Be restrictive rather than permissive, use principle of least privilege
+- Discuss security implementations with me before writing code or changing configuration
 
 ## Important Reminders
 
@@ -409,9 +318,7 @@ describe("UserService", () => {
 **ALWAYS**:
 
 - Commit working code incrementally
-- Update plan documentation as you go
 - Learn from existing implementations
-- Stop after 3 failed attempts and reassess
 - Consider the next engineer (might be you)
 - Think about edge cases and errors
 - Ask when uncertain about approach
