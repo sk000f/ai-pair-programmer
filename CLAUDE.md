@@ -276,7 +276,6 @@ export function UserCard({ user, onEdit }: UserCardProps) {
 
 Examples:
 
-- Go: Use zerolog, zap, or logrus with fields
 - Node/TS: Use winston, pino, or bunyan with objects
 - Frontend: Consider Sentry, LogRocket, or custom abstraction
 - All: Include correlation IDs for distributed tracing
